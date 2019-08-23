@@ -2,7 +2,7 @@ import ast
 
 def api():
     '''This function calls the api key already pre-defined.'''
-    api_key = 'AIzaSyAb0qDYFKw-0-S2X9WkpUebpnMRdXu5WMI'
+    api_key = input('Enter your API key:' )
     return api_key
 
 def convert(t):
