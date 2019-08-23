@@ -34,8 +34,24 @@ def get_book_bs_isbn(isbn):
             }
     return jsonify(return_value)
 
+def validBookObject(bookObject):
+    if 'name' in bookObject and 'price' in bookObject and 'isbn' in bookObject:
+        return True
+    else:
+        return False
+        
 @app.route('/books',methods = ['POST'])
 def add_books():
-    return jsonify(request.get_json())
+    request_data = request.get_json()
+    if (validBookObject(request_data)):
+        new_book = {
+            'name': request_data['name'],
+            'price': request_data['price'],
+            'isbn': request_data['isbn']
+        }
+        books.insert(0,new_book)
+        return 'True'
+    else:
+        return 'False'
 
 app.run(port = 5000) #default port of the code
