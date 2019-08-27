@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,request
+from flask import Flask,jsonify,request,Response
 
 app = Flask(__name__)
 
@@ -12,6 +12,11 @@ books = [
         'name': 'The Cat In The Hat',
         'price': 6.99,
         'isbn': 9780385372114
+    },
+    {
+    "name": "A",
+    "price": 8.99,
+    "isbn": 9785040381791
     }
 ]
 
@@ -39,7 +44,7 @@ def validBookObject(bookObject):
         return True
     else:
         return False
-        
+
 @app.route('/books',methods = ['POST'])
 def add_books():
     request_data = request.get_json()
@@ -50,8 +55,31 @@ def add_books():
             'isbn': request_data['isbn']
         }
         books.insert(0,new_book)
-        return 'True'
+        response = Response("",201,mimetype="application/json")
+        response.headers['Location'] = "books/" + str(new_book['isbn'])
+        return response
     else:
+        invalidBookObjectErrorMsg = {
+            "error":'Invalid book object passed in request',
+            "helpString": "Data passed om similar to this {'name':'bookname','price':7.9,'isbn': 9780007661428}"
+        }
+        response = Response(json.dumps(invalidBookObjectErrorMsg),status=400,mimetype='application/json');
         return 'False'
+#PUT route
+@app.route('/books/<int:isbn>',methods = ['PUT'])
+def replace_book(isbn):
+    request_data = request.get_json()
+    new_book = {
+        "name": request_data["name"],
+        "price": request_data["price"],
+        "isbn": isbn
+    }
+    i = 0
+    for book in books:
+        currentIsbn = book["isbn"]
+        if currentIsbn == isbn:
+            books[i] = new_book
+        i+= 1
+    response = Response("", status=204)
 
 app.run(port = 5000) #default port of the code
