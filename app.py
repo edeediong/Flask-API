@@ -82,4 +82,18 @@ def replace_book(isbn):
         i+= 1
     response = Response("", status=204)
 
+@app.route('/books/<int:isbn>',methods = ['PATCH'])
+def update_book(isbn):
+    request_data = request.get_json()
+    updated_book = {}
+    if "name" in request_data:
+        updated_book["name"] = request_data["name"]
+    for book in books:
+        currentIsbn = book["isbn"]
+        if currentIsbn == isbn:
+            book.update(updated_book)
+    response = Response("",status=204)
+    response.headers["Location"] = "/books/" + str(isbn)
+    return response
+    
 app.run(port = 5000) #default port of the code
