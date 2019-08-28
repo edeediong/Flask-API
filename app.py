@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,request,Response
+from flask import Flask, jsonify, request, Response
 import json
 from settings import *
 
@@ -14,22 +14,25 @@ books = [
         'isbn': 9780385372114
     },
     {
-    "name": "A",
-    "price": 8.99,
-    "isbn": 9785040381791
+        "name": "A",
+        "price": 8.99,
+        "isbn": 9785040381791
     }
 ]
 
-@app.route('/books') #GET store
+
+@app.route('/books')  # GET store
 def get_books():
     '''Function is printed when the /home route is called'''
     return jsonify({'books': books})
 
-@app.route('/') #GET Default
+
+@app.route('/')  # GET Default
 def default():
     return 'This is the Default Link'
 
-@app.route('/books/<int:isbn>') #GET ISBN
+
+@app.route('/books/<int:isbn>')  # GET ISBN
 def get_book_bs_isbn(isbn):
     for book in books:
         if book['isbn'] == isbn:
@@ -39,13 +42,15 @@ def get_book_bs_isbn(isbn):
             }
     return jsonify(return_value)
 
+
 def validBookObject(bookObject):
     if 'name' in bookObject and 'price' in bookObject and 'isbn' in bookObject:
         return True
     else:
         return False
 
-@app.route('/books',methods = ['POST'])
+
+@app.route('/books', methods=['POST'])
 def add_books():
     request_data = request.get_json()
     if (validBookObject(request_data)):
@@ -54,16 +59,20 @@ def add_books():
             'price': request_data['price'],
             'isbn': request_data['isbn']
         }
-        books.insert(0,new_book)
-        response = Response("",201,mimetype="application/json")
+        books.insert(0, new_book)
+        response = Response("", 201, mimetype="application/json")
         response.headers['Location'] = "books/" + str(new_book['isbn'])
         return response
     else:
+        error_msg = str({
+            'name': 'bookname',
+            'price': 7.9,
+            'isbn': 9780007661428})
         invalidBookObjectErrorMsg = {
-            "error":'Invalid book object passed in request',
-            "helpString": "Data passed om similar to this {'name':'bookname','price':7.9,'isbn': 9780007661428}"
+            "error": 'Invalid book object passed in request',
+            "helpString": "Data passed om similar to this " + error_msg
         }
-        response = Response(json.dumps(invalidBookObjectErrorMsg),status=400,mimetype='application/json');
+        response = Response(json.dumps(invalidBookObjectErrorMsg), status=400, mimetype='application/json')
         return 'False'
 #PUT route
 @app.route('/books/<int:isbn>',methods = ['PUT'])

@@ -11,4 +11,4 @@ class Book(db.Model):
     name = db.Column(db.String(80),nullable=False)
     price = db.Column(db.Float,nullable=False)
     isbn = db.Column(db.Integer,nullable=False)
-    
+
