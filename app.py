@@ -68,14 +68,15 @@ def add_books():
             'name': 'bookname',
             'price': 7.9,
             'isbn': 9780007661428})
-        invalidBookObjectErrorMsg = {
+        invalidAddBookObjectErrorMsg = {
             "error": 'Invalid book object passed in request',
             "helpString": "Data passed om similar to this " + error_msg
         }
-        response = Response(json.dumps(invalidBookObjectErrorMsg), status=400, mimetype='application/json')
+        json_file = json.dumps(invalidAddBookObjectErrorMsg)
+        response = Response(json_file, status=400, mimetype='application/json')
         return 'False'
-#PUT route
-@app.route('/books/<int:isbn>',methods = ['PUT'])
+# PUT route
+@app.route('/books/<int:isbn>', methods=['PUT'])
 def replace_book(isbn):
     request_data = request.get_json()
     new_book = {
@@ -88,10 +89,11 @@ def replace_book(isbn):
         currentIsbn = book["isbn"]
         if currentIsbn == isbn:
             books[i] = new_book
-        i+= 1
+        i += 1
     response = Response("", status=204)
 
-@app.route('/books/<int:isbn>',methods = ['PATCH'])
+
+@app.route('/books/<int:isbn>', methods=['PATCH'])
 def update_book(isbn):
     request_data = request.get_json()
     updated_book = {}
@@ -103,20 +105,24 @@ def update_book(isbn):
         currentIsbn = book["isbn"]
         if currentIsbn == isbn:
             book.update(updated_book)
-    response = Response("",status=204)
+    response = Response("", status=204)
     response.headers["Location"] = "/books/" + str(isbn)
     return response
 
-@app.route('/books/<int:isbn>',methods = ['DELETE'])
+
+@app.route('/books/<int:isbn>', methods=['DELETE'])
 def delete_book(isbn):
     i = 0
     for book in books:
         if book["isbn"] == isbn:
             books.pop(i)
-            response = Response("",status=204)
+            response = Response("", status=204)
             return response
         i += 1
-    invalidBookObjectErrorMsg = {"error": "ISBN not found. Deletion couldn't be completed"}
-    response = Response(json.dump(invalidBookObjectErrorMsg),status=400,mimetype= "application/json")
+    invalidDelBookObjectErrorMsg = {"error": "ISBN not found. Couldn't delete"}
+    json_file = json.dump(invalidDelBookObjectErrorMsg)
+    response = Response(json_file, status=400, mimetype="application/json")
     return response
-app.run(port = 5000) #default port of the code
+
+
+app.run(port=5000)  # default port of the code
