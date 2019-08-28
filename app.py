@@ -88,6 +88,8 @@ def update_book(isbn):
     updated_book = {}
     if "name" in request_data:
         updated_book["name"] = request_data["name"]
+    if "price" in request_data:
+        updated_book["price"] = request_data["price"]
     for book in books:
         currentIsbn = book["isbn"]
         if currentIsbn == isbn:
@@ -95,5 +97,17 @@ def update_book(isbn):
     response = Response("",status=204)
     response.headers["Location"] = "/books/" + str(isbn)
     return response
-    
+
+@app.route('/books/<int:isbn>',methods = ['DELETE'])
+def delete_book(isbn):
+    i = 0
+    for book in books:
+        if book["isbn"] == isbn:
+            books.pop(i)
+            response = Response("",status=204)
+            return response
+        i += 1
+    invalidBookObjectErrorMsg = {"error": "ISBN not found. Deletion couldn't be completed"}
+    response = Response(json.dump(invalidBookObjectErrorMsg),status=400,mimetype= "application/json")
+    return response
 app.run(port = 5000) #default port of the code
