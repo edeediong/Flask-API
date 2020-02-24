@@ -1,7 +1,19 @@
-from flask import Flask, jsonify, request, Response
 import json
+import jwt, datetime
 from settings import *
 from bookModel import *
+from flask import Flask, jsonify, request, Response
+
+DEFAULT_PAGE_LIMIT = 3
+
+app.config['SECRET_KEY'] = "meow"
+
+@app.route("/login")
+def get_token():
+    expiration_date = datetime.datetime.utcnow + datetime.timedelta(seconds=100)
+    token = jwt.encode({"exp": expiration_date}, app.config["SECRET_KEY"], algorithm="HS256")
+    return token
+
 
 @app.route('/books')  # GET store
 def get_books():
@@ -30,7 +42,7 @@ def validBookObject(bookObject):
 @app.route('/books', methods=['POST'])
 def add_books():
     request_data = request.get_json()
-    if (validBookObject(request_data)):
+    if validBookObject(request_data):
         Book.add_book(request_data['name'], request_data['price'], request_data['isbn'])
         response = Response("", 201, mimetype="application/json")
         response.headers['Location'] = "books/" + str(new_book['isbn'])
@@ -70,7 +82,7 @@ def update_book(isbn):
 
 @app.route('/books/<int:isbn>', methods=['DELETE'])
 def delete_book(isbn):
-    if(Book.delete_book(isbn)):
+    if Book.delete_book(isbn):
         response = Response("", status=204)
         return response
     invalidDelBookObjectErrorMsg = {"error": "ISBN not found. Couldn't delete"}
