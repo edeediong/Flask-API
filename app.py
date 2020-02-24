@@ -1,8 +1,9 @@
 import json
-import jwt, datetime
+import jwt
+import datetime
+from flask import Flask, jsonify, request, Response
 from settings import *
 from bookModel import *
-from flask import Flask, jsonify, request, Response
 
 DEFAULT_PAGE_LIMIT = 3
 
@@ -33,10 +34,7 @@ def get_book_bs_isbn(isbn):
 
 
 def validBookObject(bookObject):
-    if 'name' in bookObject and 'price' in bookObject and 'isbn' in bookObject:
-        return True
-    else:
-        return False
+    return 'name' in bookObject and 'price' in bookObject and 'isbn' in bookObject
 
 
 @app.route('/books', methods=['POST'])
