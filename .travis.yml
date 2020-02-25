@@ -2,4 +2,6 @@ language: python
 install:
     pip install pylint
 script:
-    pylint --disable=C0103
+    pylint bookModel.py --disable=C0103
+    pylint app.py --disable=C0103
+    pylint settings.py
